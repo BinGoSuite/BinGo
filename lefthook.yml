@@ -1,0 +1,38 @@
+# Lefthook configuration for Go project
+# Documentation: https://lefthook.dev/configuration/
+
+pre-commit:
+  parallel: true
+  commands:
+    format:
+      glob: "*.go"
+      run: gofmt -w {staged_files} && git add {staged_files}
+
+    vet:
+      glob: "*.go"
+      run: go vet {staged_files}
+
+    imports:
+      glob: "*.go"
+      run: |
+        if command -v goimports &> /dev/null; then
+          goimports -w {staged_files} && git add {staged_files}
+        fi
+
+    lint:
+      glob: "*.go"
+      run: |
+        if command -v golangci-lint &> /dev/null; then
+          golangci-lint run {staged_files}
+        fi
+
+pre-push:
+  commands:
+    test:
+      run: go test ./...
+
+    vet:
+      run: go vet ./...
+
+    build:
+      run: go env -w GOOS=windows GOARCH=amd64 && go build -o ./build/BinGo/BinGo.exe ./cmd/BinGo
