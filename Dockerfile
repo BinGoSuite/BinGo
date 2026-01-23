@@ -2,11 +2,16 @@ FROM golang:1.25-alpine
 
 WORKDIR /usr/src/BinGo
 
+# copy Go stuff and download modules
 COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . .
+# copy the source code into the container, and the example test files
+COPY cmd/BinGo ./cmd/BinGo
+COPY examples ./examples
 
-RUN go build -v -o /usr/local/bin/BinGo ./cmd/BinGo
+# build the BinGo binary
+RUN go build -v -o ./build/BinGo ./cmd/BinGo
 
-CMD [ "BinGo" ]
+# set default command in the container to run BinGo build
+CMD [ "build/BinGo" ]
