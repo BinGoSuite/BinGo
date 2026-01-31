@@ -10,7 +10,7 @@ pre-commit:
 
     vet:
       glob: "*.go"
-      run: go vet ./cmd/bingo
+      run: go vet {staged_files}
 
     imports:
       glob: "*.go"
@@ -23,7 +23,7 @@ pre-commit:
       glob: "*.go"
       run: |
         if command -v golangci-lint &> /dev/null; then
-          golangci-lint run ./cmd/bingo
+          golangci-lint run {staged_files}
         fi
 
 pre-push:
@@ -44,7 +44,7 @@ commit-msg:
   commands:
     check-message:
       run: |
-        if [ ! -f githook/bin/commitlint ]; then
-          go build -o githook/bin/commitlint githook/commitlint.go
+        if [ ! -f ./build/githook/commitlint ]; then
+          go build -o ./build/githook/commitlint ./cmd/githook
         fi
-        githook/bin/commitlint {1}
+        ./build/githook/commitlint {1}
